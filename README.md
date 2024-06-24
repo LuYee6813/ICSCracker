@@ -17,6 +17,6 @@
    - help, h                Shows a list of commands or help for one command
 
 ## GLOBAL OPTIONS:
-   --ip value, -i value    Set the target ip
-   --port value, -p value  Set the target port
-   --help, -h              show help
+   - --ip value, -i value    Set the target ip
+   - --port value, -p value  Set the target port
+   - --help, -h              show help
