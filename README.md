@@ -2,21 +2,24 @@
 
 ![alt text](image.png)
 
-## NAME:
-   - ICSCracker - is a useful ICS attack tool
+## Support
 
-## USAGE:
-   - ICSCracker [global options] command [command options]
+✅ Windows 
+✅ Linux
+✅ MacOS
 
-## COMMANDS:
-   - icsProtocolFound, ics  Discover ICS protocol
-   - modbusRead, mR         Read modbus server register or coli value
-   - modbusWrite, mW        Write modbus server register or coil value
-   - replayAttack, aR       Replay attack packet
-   - dosAttack, aD          Denial of Service attack
-   - help, h                Shows a list of commands or help for one command
+## Requirement
+✅ Check go version >= 1.22
 
-## GLOBAL OPTIONS:
-   - --ip value, -i value    Set the target ip
-   - --port value, -p value  Set the target port
-   - --help, -h              show help
+```bash
+go version
+```
+
+## Quick Install
+```bash
+git clone https://github.com/LuYee6813/ICSCracker
+cd ICSCracker
+go bulid
+go install
+ICSCracker
+```
