@@ -24,7 +24,7 @@
 ```bash
 git clone https://github.com/LuYee6813/ICSCracker
 cd ICSCracker
-go bulid
+go build
 go install
 ICSCracker
 ```
