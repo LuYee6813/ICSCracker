@@ -15,14 +15,18 @@ func ValidateIP(ip string) bool {
 }
 
 func SetupCLI() *cli.App {
+	var ip, port string
+	var networkInterface string
+	var pcapFile string
 	var regAddr string
 	var value int
-	var ip, port string
 
 	app := &cli.App{
-		Name:  "ICSCracker",
-		Usage: "is a useful ICS attack tool",
+		Name: "ICSCracker",
+		// 是一個測試ICS場域的工具，可應用於所有IEC62443-2-2 ~ 4-1資安認證
+		Usage: "A tool to test ICS area, applicable to all IEC62443-2-2 ~ 4-1 cybersecurity certifications",
 		Flags: []cli.Flag{
+			// ip
 			&cli.StringFlag{
 				Name:    "ip",
 				Aliases: []string{"i"},
@@ -36,6 +40,7 @@ func SetupCLI() *cli.App {
 					return nil
 				},
 			},
+			// port
 			&cli.StringFlag{
 				Name:    "port",
 				Aliases: []string{"p"},
@@ -131,6 +136,7 @@ func SetupCLI() *cli.App {
 					return nil
 				},
 			},
+			// modbusWrite
 			{
 				Name:    "modbusWrite",
 				Aliases: []string{"mW"},
@@ -169,18 +175,6 @@ func SetupCLI() *cli.App {
 						},
 					},
 					{
-						Name:  "IR",
-						Usage: "Write input registers",
-						Action: func(c *cli.Context) error {
-							if ip == "" || port == "" {
-								return fmt.Errorf("IP and port must be set using --ip and --port flags")
-							}
-							client := pkg.ConnectModbus(ip, port)
-							pkg.ModbusWrite(client, regAddr, value, "IR")
-							return nil
-						},
-					},
-					{
 						Name:  "C",
 						Usage: "Write coils",
 						Action: func(c *cli.Context) error {
@@ -192,18 +186,6 @@ func SetupCLI() *cli.App {
 							return nil
 						},
 					},
-					{
-						Name:  "IS",
-						Usage: "Write input status",
-						Action: func(c *cli.Context) error {
-							if ip == "" || port == "" {
-								return fmt.Errorf("IP and port must be set using --ip and --port flags")
-							}
-							client := pkg.ConnectModbus(ip, port)
-							pkg.ModbusWrite(client, regAddr, value, "IS")
-							return nil
-						},
-					},
 				},
 				Action: func(cCtx *cli.Context) error {
 					fmt.Println("EXAMPLES:")
@@ -212,15 +194,56 @@ func SetupCLI() *cli.App {
 					return nil
 				},
 			},
+			// replayAttack
 			{
 				Name:    "replayAttack",
 				Aliases: []string{"aR"},
 				Usage:   "Replay attack packet",
+				Flags: []cli.Flag{
+					// pcap
+					&cli.StringFlag{
+						Name:    "pcap",
+						Aliases: []string{"f"},
+						Usage:   "Path to the pcap file to be replayed",
+						Action: func(ctx *cli.Context, s string) error {
+							pcapFile = s
+							return nil
+						},
+						Required: true,
+					},
+					// networkInterface
+					&cli.StringFlag{
+						Name:    "networkInterface",
+						Aliases: []string{"n"},
+						Usage:   "Set the network interface to be used for replay attack",
+						Action: func(ctx *cli.Context, s string) error {
+							fmt.Println("Setting network interface:", s)
+							networkInterface = s
+							return nil
+						},
+						Required: true,
+					},
+				},
 				Action: func(c *cli.Context) error {
-					fmt.Println("Replay attack")
+					if pcapFile == "" {
+						return fmt.Errorf("pcap file path must be provided using --pcap flag")
+					}
+					if ip == "" {
+						return fmt.Errorf("network interface must be set using --ip flag")
+					}
+					if networkInterface == "" {
+						return fmt.Errorf("network interface must be set using --networkInterface flag")
+					}
+					fmt.Println("Replaying pcap file:", pcapFile)
+					err := pkg.ReplayPcap(pcapFile, networkInterface) // 调用ReplayPcap方法
+					if err != nil {
+						return fmt.Errorf("failed to replay pcap: %v", err)
+					}
+					fmt.Println("Replay attack completed successfully.")
 					return nil
 				},
 			},
+			// dosAttack
 			{
 				Name:    "dosAttack",
 				Aliases: []string{"aD"},
