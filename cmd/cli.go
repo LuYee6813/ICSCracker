@@ -53,6 +53,16 @@ func SetupCLI() *cli.App {
 			},
 		},
 		Commands: []*cli.Command{
+			// showNetworkInterface
+			{
+				Name:    "showNetworkInterface",
+				Aliases: []string{"net"},
+				Usage:   "Show all network interfaces on this computer",
+				Action: func(c *cli.Context) error {
+					pkg.ShowNetworkInterface()
+					return nil
+				},
+			},
 			{
 				Name:    "icsProtocolFound",
 				Aliases: []string{"ics"},
@@ -228,14 +238,11 @@ func SetupCLI() *cli.App {
 					if pcapFile == "" {
 						return fmt.Errorf("pcap file path must be provided using --pcap flag")
 					}
-					if ip == "" {
-						return fmt.Errorf("network interface must be set using --ip flag")
-					}
 					if networkInterface == "" {
 						return fmt.Errorf("network interface must be set using --networkInterface flag")
 					}
 					fmt.Println("Replaying pcap file:", pcapFile)
-					err := pkg.ReplayPcap(pcapFile, networkInterface) // 调用ReplayPcap方法
+					err := pkg.ReplayPcap(pcapFile, networkInterface)
 					if err != nil {
 						return fmt.Errorf("failed to replay pcap: %v", err)
 					}
